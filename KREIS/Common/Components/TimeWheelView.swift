@@ -188,7 +188,7 @@ final class TimeWheelView: UIView {
                 indicatorLayer.add(animation, forKey: "moveIndicator")
                 
                 let rotationAnim = CABasicAnimation(keyPath: "transform.rotation.z")
-                rotationAnim.toValue = targetAngle + (CGFloat.pi / 2) // İbre çembere dik dursun
+                rotationAnim.toValue = targetAngle + (CGFloat.pi / 2)
                 rotationAnim.duration = 1.0
                 rotationAnim.fillMode = .forwards
                 rotationAnim.isRemovedOnCompletion = false

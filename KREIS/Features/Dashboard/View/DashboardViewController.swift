@@ -45,6 +45,13 @@ class DashboardViewController: UIViewController {
         return stack
     }()
     
+    private lazy var addButton: CircleButton = {
+        let button = CircleButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(didTapAdd), for: .touchUpInside)
+        return button
+    }()
+    
     
     // MARK: - Properties
     
@@ -77,6 +84,7 @@ class DashboardViewController: UIViewController {
         
         view.addSubview(timeWheel)
         view.addSubview(infoStack)
+        view.addSubview(addButton)
         
         NSLayoutConstraint.activate([
      
@@ -88,9 +96,24 @@ class DashboardViewController: UIViewController {
             
             // StackView
             infoStack.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            infoStack.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+            infoStack.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            
+            // Add Button
+            addButton.widthAnchor.constraint(equalToConstant: 56),
+            addButton.heightAnchor.constraint(equalToConstant: 56),
+            addButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
+            addButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -24)
             
         ])
+    }
+    
+    // MARK: - Actions
+    
+    @objc private func didTapAdd() {
+        print("New Task Add Screen")
+        
+        let generator = UIImpactFeedbackGenerator(style: .medium)
+        generator.impactOccurred()
     }
     
     
