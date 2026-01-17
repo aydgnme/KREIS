@@ -19,7 +19,7 @@ class AddTaskViewController: UIViewController {
     // Custom Picker
     private let startPicker = BauhausTimePicker()
     private let endPicker = BauhausTimePicker()
-
+    
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
@@ -29,9 +29,11 @@ class AddTaskViewController: UIViewController {
         
         startPicker.setDate(Date())
         endPicker.setDate(Date().addingTimeInterval(3600))
+        
+        setupKeyboardDismiss()
     }
     
-
+    
     // MARK: - UI Components
     
     /// Label
@@ -185,6 +187,15 @@ class AddTaskViewController: UIViewController {
         ])
     }
     
+    private func setupKeyboardDismiss() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+        
+        titleTextField.delegate = self
+        titleTextField.returnKeyType = .done
+    }
+    
     private func setupCategoryButtons() {
         let types: [TaskType] = [.work, .personal, .routine, .sleep]
         
@@ -213,7 +224,7 @@ class AddTaskViewController: UIViewController {
     
     
     // MARK: - Actions
-
+    
     @objc private func didSelectType(_ sender: UIButton) {
         // Haptic
         let generator = UISelectionFeedbackGenerator()
@@ -245,10 +256,22 @@ class AddTaskViewController: UIViewController {
         let newTask = Task(title: title, type: selectedType, startTime: startPicker.date, endTime: endPicker.date)
         
         delegate?.didAddTask(newTask)
-     
+        
         let generator = UINotificationFeedbackGenerator()
         generator.notificationOccurred(.success)
         
         dismiss(animated: true)
+    }
+    
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
+    }
+}
+
+
+extension AddTaskViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
 }

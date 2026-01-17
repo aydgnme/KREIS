@@ -170,3 +170,41 @@ extension DashboardViewController: AddTaskViewControllerDelegate {
         print("New Task added to the list.")
     }
 }
+
+// MARK: - TimeWheel Delegate
+extension DashboardViewController: TimeWheelDelegate {
+    func didSelectTask(_ task: Task?) {
+        guard let task = task else { return }
+        
+        print("Task Selected: \(task.title)")
+        
+        
+        UIView.transition(with: infoStack, duration: 0.3, options: .transitionCrossDissolve, animations: {
+        
+            self.timeLabel.text = task.title.uppercased()
+            self.timeLabel.font = UIFont(name: "Futura-Bold", size: 32)
+            
+            let formatter = DateFormatter()
+            formatter.dateFormat = "HH:mm"
+            let start = formatter.string(from: task.startTime)
+            let end = formatter.string(from: task.endTime)
+            
+            self.dateLabel.text = "\(start) - \(end)"
+            self.dateLabel.textColor = task.type.color
+        })
+        
+        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(resetToClockMode), object: nil)
+        perform(#selector(resetToClockMode), with: nil, afterDelay: 3.0)
+    }
+    
+    @objc private func resetToClockMode() {
+        
+        tick()
+        
+        UIView.transition(with: infoStack, duration: 0.3, options: .transitionCrossDissolve, animations: {
+            self.timeLabel.font = UIFont(name: "Futura-Bold", size: 52)
+            self.timeLabel.textColor = .kreisBlack
+            self.dateLabel.textColor = .kreisBlack.withAlphaComponent(0.6)
+        })
+    }
+}

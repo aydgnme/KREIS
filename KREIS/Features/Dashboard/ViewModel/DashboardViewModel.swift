@@ -24,11 +24,7 @@ final class DashboardViewModel {
         }
         
         self.tasks = [
-            Task(title: "Morning Routine", type: .routine, startTime: date(hour: 7, minute: 0), endTime: date(hour: 8, minute: 30)),
-            Task(title: "Deep Work", type: .work, startTime: date(hour: 9, minute: 0), endTime: date(hour: 12, minute: 30)),
-            Task(title: "Lunch & Read", type: .personal, startTime: date(hour: 13, minute: 0), endTime: date(hour: 14, minute: 0)),
-            Task(title: "Coding Session", type: .work, startTime: date(hour: 14, minute: 30), endTime: date(hour: 18, minute: 0)),
-            Task(title: "Sleep", type: .sleep, startTime: date(hour: 23, minute: 0), endTime: date(hour: 23, minute: 59))
+            
         ]
     }
     

@@ -7,8 +7,14 @@
 
 import UIKit
 
+protocol TimeWheelDelegate: AnyObject {
+    func didSelectTask(_ task: Task?)
+}
+
 final class TimeWheelView: UIView {
     
+    weak var delegate: TimeWheelDelegate?
+    private var tasks: [Task] = []
     
     // MARK: - Constants
     
@@ -80,6 +86,7 @@ final class TimeWheelView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupLayers()
+        setupGesture()
     }
     
     required init?(coder: NSCoder) {
@@ -96,6 +103,14 @@ final class TimeWheelView: UIView {
             drawPath()
             lastFrame = bounds
         }
+    }
+    
+    
+    // MARK: - Setup Gesure
+    
+    private func setupGesture() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+        addGestureRecognizer(tap)
     }
     
     
@@ -204,6 +219,8 @@ final class TimeWheelView: UIView {
     
     // MARK: - Task Drawing Logic
     func setTasks(_ tasks: [Task]) {
+        self.tasks = tasks
+        
         tasksLayer.sublayers?.forEach { $0.removeFromSuperlayer() }
         
         let centerPoint = CGPoint(x: bounds.midX, y: bounds.midY)
@@ -252,6 +269,51 @@ final class TimeWheelView: UIView {
         
         
         return (ratio * 2 * CGFloat.pi) - (CGFloat.pi / 2)
+    }
+    
+    
+    // MARK: - Interaction Logic
+    
+    @objc private func handleTap(_ gesture: UITapGestureRecognizer) {
+        let point = gesture.location(in: self)
+        let centerPoint = CGPoint(x: bounds.midX, y: bounds.midY)
+        
+        
+        let distance = hypot(point.x - centerPoint.x, point.y - centerPoint.y)
+        let outerRadius = min(bounds.width, bounds.height) / 2
+        let innerRadius = outerRadius - 60
+        
+        if distance > outerRadius { return }
+        
+        var angle = atan2(point.y - centerPoint.y, point.x - centerPoint.x)
+        
+        angle += CGFloat.pi / 2
+        
+        if angle < 0 {
+            angle += 2 * CGFloat.pi
+        }
+        
+        let totalMinutesInDay: CGFloat = 1440.0
+        
+        let touchedMinute = (angle / (2 * CGFloat.pi)) * totalMinutesInDay
+        
+        let foundTask = tasks.first { task in
+            let startMin = CGFloat(Calendar.current.component(.hour, from: task.startTime) * 60 + Calendar.current.component(.minute, from: task.startTime))
+            var endMin = CGFloat(Calendar.current.component(.hour, from: task.endTime) * 60 + Calendar.current.component(.minute, from: task.endTime))
+            
+            if endMin < startMin {
+                endMin += 1440
+            }
+            
+            return touchedMinute >= startMin && touchedMinute <= endMin
+        }
+        
+        if foundTask != nil {
+            let generator = UISelectionFeedbackGenerator()
+            generator.selectionChanged()
+        }
+        
+        delegate?.didSelectTask(foundTask)
     }
 }
 
