@@ -31,4 +31,9 @@ final class DashboardViewModel {
             Task(title: "Sleep", type: .sleep, startTime: date(hour: 23, minute: 0), endTime: date(hour: 23, minute: 59))
         ]
     }
+    
+    func addNewTask(_ task: Task) {
+        tasks.append(task)
+        tasks.sort { $0.startTime < $1.startTime }
+    }
 }

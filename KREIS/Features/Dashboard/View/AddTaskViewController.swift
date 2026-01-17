@@ -7,7 +7,14 @@
 
 import UIKit
 
+protocol AddTaskViewControllerDelegate: AnyObject {
+    func didAddTask(_ task: Task)
+}
+
 class AddTaskViewController: UIViewController {
+    
+    // MARK: - Delegate
+    weak var delegate: AddTaskViewControllerDelegate?
     
     // Custom Picker
     private let startPicker = BauhausTimePicker()
@@ -235,11 +242,9 @@ class AddTaskViewController: UIViewController {
             return
         }
         
-        print("Saving Task: \(title)")
-        print("Type: \(selectedType)")
-        print("Start: \(startPicker.date)")
-        print("End: \(endPicker.date)")
+        let newTask = Task(title: title, type: selectedType, startTime: startPicker.date, endTime: endPicker.date)
         
+        delegate?.didAddTask(newTask)
      
         let generator = UINotificationFeedbackGenerator()
         generator.notificationOccurred(.success)

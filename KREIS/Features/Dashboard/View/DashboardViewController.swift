@@ -114,6 +114,7 @@ class DashboardViewController: UIViewController {
         generator.impactOccurred()
         
         let vc = AddTaskViewController()
+        vc.delegate = self
         
         if let sheet = vc.sheetPresentationController {
             sheet.detents = [.large()]
@@ -158,4 +159,14 @@ class DashboardViewController: UIViewController {
         timeWheel.setProgress(progress, animated: true)
     }
 
+}
+
+extension DashboardViewController: AddTaskViewControllerDelegate {
+    func didAddTask(_ task: Task) {
+        viewModel.addNewTask(task)
+        
+        timeWheel.setTasks(viewModel.tasks)
+        
+        print("New Task added to the list.")
+    }
 }
