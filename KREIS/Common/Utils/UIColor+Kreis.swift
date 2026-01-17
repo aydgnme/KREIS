@@ -8,6 +8,7 @@
 import UIKit
 
 // MARK: - Bauhaus Palette
+
 extension UIColor {
     static let kreisBackground = UIColor(red: 0.96, green: 0.96, blue: 0.94, alpha: 1.00)
     static let kreisBlack = UIColor(red: 0.10, green: 0.10, blue: 0.10, alpha: 1.00)

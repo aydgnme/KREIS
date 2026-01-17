@@ -16,40 +16,116 @@ class DashboardViewController: UIViewController {
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
+    
+    private let timeLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont(name: "Futura-Bold", size: 52) ?? .systemFont(ofSize: 52, weight: .heavy)
+        label.textColor = .kreisBlack
+        label.textAlignment = .center
+        label.text = "--:--"
+        
+        return label
+    }()
+    
+    private let dateLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont(name: "Futura-Medium", size: 16) ?? .systemFont(ofSize: 16, weight: .medium)
+        label.textColor = .kreisBlack.withAlphaComponent(0.6)
+        label.textAlignment = .center
+        label.text = "..."
+        return label
+    }()
+    
+    private lazy var infoStack: UIStackView = {
+       let stack = UIStackView(arrangedSubviews: [timeLabel, dateLabel])
+        stack.axis = .vertical
+        stack.spacing = 4
+        stack.alignment = .center
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        return stack
+    }()
+    
+    
+    // MARK: - Properties
+    
+    private var timer: Timer?
+    private var viewModel = DashboardViewModel()
 
+    
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+        startClock()
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            self.timeWheel.setProgress(0.0, animated: false)
-            self.timeWheel.setProgress(0.35, animated: true)
-        }
+        viewModel.fetchTodayTask()
+        
+        timeWheel.setTasks(viewModel.tasks)
     }
     
-
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        timeWheel.setTasks(viewModel.tasks)
+    }
+    
+    
     // MARK: - UI Setup
     
     private func setupUI() {
         view.backgroundColor = .kreisBackground
         
         view.addSubview(timeWheel)
+        view.addSubview(infoStack)
         
         NSLayoutConstraint.activate([
      
+            // Time Wheel
             timeWheel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             timeWheel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            
-     
             timeWheel.widthAnchor.constraint(equalToConstant: 300),
-            timeWheel.heightAnchor.constraint(equalToConstant: 300)
+            timeWheel.heightAnchor.constraint(equalToConstant: 300),
+            
+            // StackView
+            infoStack.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            infoStack.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+            
         ])
+    }
+    
+    
+    // MARK: - Logic (Clock)
+    
+    private func startClock() {
+        tick()
+        
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            self?.tick()
+        }
+    }
+    
+    @objc private func tick() {
+        let now = Date()
+        let calendar = Calendar.current
+        
+        
+        let timeFormatter = DateFormatter()
+        timeFormatter.dateFormat = "HH:mm"
+        timeLabel.text = timeFormatter.string(from: now)
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "E, d MMM"
+        dateLabel.text = dateFormatter.string(from: now).uppercased()
+        
+        let hour = calendar.component(.hour, from: now)
+        let minute = calendar.component(.minute, from: now)
+        
+        let totalMinutesPassed = CGFloat(hour * 60 + minute)
+        let totalMinutesInDay = 24.0 * 60.0
+        
+        let progress = totalMinutesPassed / totalMinutesInDay
+        
+        timeWheel.setProgress(progress, animated: true)
     }
 
 }
