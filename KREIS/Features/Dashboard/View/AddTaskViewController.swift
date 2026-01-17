@@ -8,6 +8,10 @@
 import UIKit
 
 class AddTaskViewController: UIViewController {
+    
+    // Custom Picker
+    private let startPicker = BauhausTimePicker()
+    private let endPicker = BauhausTimePicker()
 
     // MARK: - Lifecycle
     
@@ -15,6 +19,9 @@ class AddTaskViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         setupCategoryButtons()
+        
+        startPicker.setDate(Date())
+        endPicker.setDate(Date().addingTimeInterval(3600))
     }
     
 
@@ -60,25 +67,6 @@ class AddTaskViewController: UIViewController {
         return stack
     }()
     
-    // Time Picker
-    private let startPicker: UIDatePicker = {
-        let picker = UIDatePicker()
-        picker.datePickerMode = .time
-        picker.preferredDatePickerStyle = .compact
-        picker.tintColor = .kreisBlue
-        return picker
-    }()
-    
-    private let endPicker: UIDatePicker = {
-        let picker = UIDatePicker()
-        picker.datePickerMode = .time
-        picker.preferredDatePickerStyle = .compact
-        picker.tintColor = .kreisRed
-        
-        picker.date = Date().addingTimeInterval(3600)
-        return picker
-    }()
-    
     // SaveBtn
     private lazy var saveButton: UIButton = {
         let btn = UIButton(type: .system)
@@ -120,6 +108,9 @@ class AddTaskViewController: UIViewController {
         view.addSubview(endPicker)
         view.addSubview(saveButton)
         
+        startPicker.translatesAutoresizingMaskIntoConstraints = false
+        endPicker.translatesAutoresizingMaskIntoConstraints = false
+        
         // Autolayout (Constraints)
         [titleLabel, titleTextField, separatorLine, categoryLabel, categoryStack, timeLabel, startPicker, endPicker, saveButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -154,17 +145,36 @@ class AddTaskViewController: UIViewController {
             timeLabel.topAnchor.constraint(equalTo: categoryStack.bottomAnchor, constant: 40),
             timeLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
             
+            // Start Picker
             startPicker.topAnchor.constraint(equalTo: timeLabel.bottomAnchor, constant: 16),
-            startPicker.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+            startPicker.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: -80),
+            startPicker.widthAnchor.constraint(equalToConstant: 100),
+            startPicker.heightAnchor.constraint(equalToConstant: 120),
             
+            // End Picker
             endPicker.centerYAnchor.constraint(equalTo: startPicker.centerYAnchor),
-            endPicker.leadingAnchor.constraint(equalTo: startPicker.trailingAnchor, constant: 24),
+            endPicker.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 80),
+            endPicker.widthAnchor.constraint(equalToConstant: 100),
+            endPicker.heightAnchor.constraint(equalToConstant: 120),
             
             // Save
-            saveButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -24),
+            saveButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
             saveButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
             saveButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
             saveButton.heightAnchor.constraint(equalToConstant: 56)
+            
+        ])
+        
+        let arrowLabel = UILabel()
+        arrowLabel.text = "→"
+        arrowLabel.font = UIFont(name: "Futura-Bold", size: 24)
+        arrowLabel.textColor = .kreisBlack
+        arrowLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(arrowLabel)
+        
+        NSLayoutConstraint.activate([
+            arrowLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            arrowLabel.centerYAnchor.constraint(equalTo: startPicker.centerYAnchor)
         ])
     }
     

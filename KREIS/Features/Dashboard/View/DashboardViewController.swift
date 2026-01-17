@@ -116,7 +116,7 @@ class DashboardViewController: UIViewController {
         let vc = AddTaskViewController()
         
         if let sheet = vc.sheetPresentationController {
-            sheet.detents = [ .medium(), .large()]
+            sheet.detents = [.large()]
             sheet.prefersGrabberVisible = true
         }
         

@@ -7,14 +7,61 @@
 
 import UIKit
 
-class TriangleButton: UIButton {
+final class TriangleButton: UIButton {
 
-    /*
-    // Only override draw() if you perform custom drawing.
-    // An empty implementation adversely affects performance during animation.
-    override func draw(_ rect: CGRect) {
-        // Drawing code
+    enum Direction {
+        case up
+        case down
     }
-    */
-
+    
+    private let direction: Direction
+    private let color: UIColor
+    
+    // MARK: - Init
+    
+    init(direction: Direction, color: UIColor = .kreisBlack) {
+        self.direction = direction
+        self.color = color
+        super.init(frame: .zero)
+        backgroundColor = .clear
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+        
+    // MARK: - Draw (Core Graphics)
+        
+    override func draw(_ rect: CGRect) {
+        guard let context = UIGraphicsGetCurrentContext() else { return }
+        
+        context.beginPath()
+        context.setFillColor(color.cgColor)
+        
+    
+        let w = rect.width
+        let h = rect.height
+        
+        if direction == .up {
+            context.move(to: CGPoint(x: w / 2, y: 4))
+            context.addLine(to: CGPoint(x: w - 4, y: h - 4))
+            context.addLine(to: CGPoint(x: 4, y: h - 4))
+        } else {
+            context.move(to: CGPoint(x: 4, y: 4))
+            context.addLine(to: CGPoint(x: w - 4, y: 4))
+            context.addLine(to: CGPoint(x: w / 2, y: h - 4))
+        }
+        
+        context.closePath()
+        context.fillPath()
+    }
+        
+     
+    override var isHighlighted: Bool {
+        didSet {
+            alpha = isHighlighted ? 0.5 : 1.0
+        }
+    }
+    
 }
