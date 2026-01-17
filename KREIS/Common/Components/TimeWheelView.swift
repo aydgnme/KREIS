@@ -16,6 +16,8 @@ final class TimeWheelView: UIView {
         static let endAngle: CGFloat = 1.5 * CGFloat.pi
     }
     
+    private var lastFrame: CGRect = .zero
+    
     // MARK: - UI Components
     private lazy var trackLayer: CAShapeLayer = {
         let layer = CAShapeLayer()
@@ -49,7 +51,11 @@ final class TimeWheelView: UIView {
     // MARK: - Lifecycle
     override func layoutSubviews() {
         super.layoutSubviews()
-        drawPath()
+        
+        if bounds != lastFrame {
+            drawPath()
+            lastFrame = bounds
+        }
     }
     
     // MARK: - Setup
@@ -78,17 +84,21 @@ final class TimeWheelView: UIView {
     func setProgress(_ value: CGFloat, animated: Bool = true) {
         let clampedValue = max(0, min(1, value))
         
+        let oldValue = progressLayer.strokeEnd
+        
+        progressLayer.strokeEnd = clampedValue
+        
         if animated {
             let animation = CABasicAnimation(keyPath: "strokeEnd")
-            animation.fromValue = progressLayer.strokeEnd
+            animation.fromValue = oldValue
             animation.toValue = clampedValue
             animation.duration = 1.0
-            animation.timingFunction = CAMediaTimingFunction(controlPoints: 0.19, 1.0, 0.22, 1.0)
+            animation.timingFunction = CAMediaTimingFunction(name: .easeOut)
             
-            progressLayer.strokeEnd = clampedValue
-            progressLayer.add(animation, forKey: "animateProgress")
-        } else {
-            progressLayer.strokeEnd = clampedValue
+            animation.fillMode = .forwards
+            animation.isRemovedOnCompletion = false
+            
+            progressLayer.add(animation, forKey: "progressAnim")
         }
     }
 }

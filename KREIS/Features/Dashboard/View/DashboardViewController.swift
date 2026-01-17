@@ -28,7 +28,8 @@ class DashboardViewController: UIViewController {
         super.viewDidAppear(animated)
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            self.timeWheel.setProgress(0.35)
+            self.timeWheel.setProgress(0.0, animated: false)
+            self.timeWheel.setProgress(0.35, animated: true)
         }
     }
     
