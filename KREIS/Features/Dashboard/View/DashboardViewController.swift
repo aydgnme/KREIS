@@ -8,22 +8,47 @@
 import UIKit
 
 class DashboardViewController: UIViewController {
+    
+    // MARK: - UI Components
+    
+    private let timeWheel: TimeWheelView = {
+        let view = TimeWheelView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
 
+    // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        setupUI()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.timeWheel.setProgress(0.35)
+        }
     }
     
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    // MARK: - UI Setup
+    
+    private func setupUI() {
+        view.backgroundColor = .kreisBackground
+        
+        view.addSubview(timeWheel)
+        
+        NSLayoutConstraint.activate([
+     
+            timeWheel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            timeWheel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            
+     
+            timeWheel.widthAnchor.constraint(equalToConstant: 300),
+            timeWheel.heightAnchor.constraint(equalToConstant: 300)
+        ])
     }
-    */
 
 }
