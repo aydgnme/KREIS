@@ -110,10 +110,17 @@ class DashboardViewController: UIViewController {
     // MARK: - Actions
     
     @objc private func didTapAdd() {
-        print("New Task Add Screen")
-        
         let generator = UIImpactFeedbackGenerator(style: .medium)
         generator.impactOccurred()
+        
+        let vc = AddTaskViewController()
+        
+        if let sheet = vc.sheetPresentationController {
+            sheet.detents = [ .medium(), .large()]
+            sheet.prefersGrabberVisible = true
+        }
+        
+        present(vc, animated: true)
     }
     
     
